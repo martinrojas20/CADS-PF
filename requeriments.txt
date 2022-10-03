@@ -1,1 +1,1 @@
-Lo que haga falta
+Agregaremos las librerías que utilizaremos y sus versiones (python también)
