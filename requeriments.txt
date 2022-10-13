@@ -1,1 +1,0 @@
-Agregaremos las librerías que utilizaremos y sus versiones (python también)
