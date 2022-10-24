@@ -4,7 +4,7 @@ from pyspark.sql import functions as F
 from pyspark.sql import types
 
 spark = SparkSession.builder.appName('sent').getOrCreate() #Abrimos el archivo
-df = spark.read.json('../common/data/reviews_etl')
+df = spark.read.json('../common/data/reviews_clean')
 
 #Definimos los diccionarios
 calidad = ['quality','condition','make','made','plastic','plastics','material','materials','finished','well-finished','solid','sturdy','durable','well-made','broken','weak','breaks','fragile']

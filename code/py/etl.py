@@ -9,6 +9,7 @@ products = spark.read.json("../common/data/products.json") #Abrimos el archivo P
 products = products.drop('imUrl', '_corrupt_record', 'brand', 'description', 'salesRank') #Tumbamos las columnas que no sirven
 products = products.selectExpr('asin as productId','categories as categories','related as related','title as title','price as price') #Renombramos las columnas
 products = products.dropna(subset='productId') #Quitamos los productos no iDentificados
+products = products.dropna(subset='title') #Quitamos los productos no iDentificados
 
 #Cambiamos el tipo de dato de las columnas que nesecitamos.
 products = products.withColumn('categories', F.col('categories').cast(StringType()))
@@ -20,10 +21,6 @@ products = products.withColumn("categories",translate("categories","[",""))
 products = products.withColumn("categories",translate("categories","]",""))
 products = products.withColumn("related",translate("related","[",""))
 products = products.withColumn("related",translate("related","]",""))
-
-products.write.json('../common/data/products_etl') #Guardamos el DataFrame Productos
-
-del products
 
 reviews = spark.read.json("../common/data/reviews.json") #Abrimos el archivo Reviews
 
@@ -38,6 +35,8 @@ reviews = reviews.withColumn("reviewTime",translate("reviewTime"," ","-")) #Refo
 reviews = reviews.withColumn("reviewTime",to_date(col("reviewTime"),"MM-d-yyyy")) #Convertimos la fecha a fecha
 reviews = reviews.na.drop() #Quitamos los registros con valores nulos
 
-reviews.write.json('../common/data/reviews_etl') #Guardamos el DataFrame Reviews
+products = products.join(reviews,products.productId == reviews.productId,"leftsemi") #Quitamos de productos los id de reviews
+reviews = reviews.join(products,reviews.productId == products.productId,"leftsemi") #Quitamos de reviews los id de productos
 
-del products
+reviews.write.json('../common/data/reviews_clean') #Guardamos la data Comparada
+products.write.json('../common/data/products_clean')
