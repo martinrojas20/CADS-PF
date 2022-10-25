@@ -2,6 +2,8 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer  #Importamos lo nece
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql import types
+import nltk
+nltk.download('vader_lexicon')
 
 spark = SparkSession.builder.appName('sent').getOrCreate() #Abrimos el archivo
 df = spark.read.json('../common/data/reviews_clean')
@@ -75,4 +77,4 @@ df = df.withColumn("precio", col_n(F.col("precio"),F.col('posIndex')).cast('Inte
 
 df = df.drop('posIndex','tokens','sentiment_float','reviewText') #Eliminamos las tablas que ya no necesitamos
 
-df.write.json('../common/data/reviews_processed.json') #Guardamos el json
+df.write.json('../common/data/reviews_processed') #Guardamos el json
